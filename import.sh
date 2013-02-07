@@ -23,4 +23,5 @@ $get_file_content | time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C
 
 cat ./pre-post-import/after_create.sql | psql osm
 
-echo "fin import $1" | mail -s "import $1 fini" sylvain@letuffe.org -- -f sylvain@letuffe.org
+#Here if you want to receive an email when the import is done
+echo "fin import $1" | mail -s "import $1 fini" your@email.org -- -f your@email.org
