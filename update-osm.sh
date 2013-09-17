@@ -45,7 +45,7 @@ if [ ! -n "$LOAD" ] ; then
 
 	# Si le fichier diff est toujours là, c'est que osm2pgsql n'a pas pu l'importer, on ne télécharge pas de nouveau
 	if ! test -e $DIFF_FILE ; then
-		time ../osmosis-0.39/bin/osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
+		time ../osmosis-0.43.1/bin/osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
 	fi
 
 	#Import du diff, avec création de la liste des tuiles à ré-générer
