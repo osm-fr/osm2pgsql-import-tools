@@ -12,14 +12,7 @@ cat ./pre-post-import/clean.sql | psql osm
 filename=$(basename "$1")
 extension="${filename##*.}"
 
-if [ $extension == "bz2" ] ; then
-	get_file_content="bunzip2 $1 -c"
-else
-	get_file_content="../osmconvert/osmconvert $1 --out-osm"
-fi
-
-
-$get_file_content | time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C 3000 -s -S ./default.style -G -m --unlogged -d osm /dev/stdin
+time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C 3000 -s -S ./default.style -G -m --unlogged -d osm $1
 
 cat ./pre-post-import/after_create.sql | psql osm
 
