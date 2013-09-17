@@ -12,7 +12,7 @@ cat ./pre-post-import/clean.sql | psql osm
 filename=$(basename "$1")
 extension="${filename##*.}"
 
-time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C 3000 -s -S ./default.style -G -m --unlogged -d osm $1
+time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C 3000 -s -S ./default.style --tag-transform-script style.lua --tag-transform-script style.lua -G -m --unlogged -d osm $1
 
 cat ./pre-post-import/after_create.sql | psql osm
 
