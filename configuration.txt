@@ -5,8 +5,19 @@ baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
 # Defines the maximum time interval in seconds to download in a single invocation.
 # Setting to 0 disables this feature.
 
-#maxInterval = 1200
-maxInterval = 60
+maxInterval = 3600
+#maxInterval = 60
 
 # Jocelyn - 2 journées
+# sly : je ne pense pas qu'une si grande valeure soit pertinente car :
+# en cas de lancement manuel "pour test" après un grand retard, le
+# traitement prend tellement de temps qu'on sait plus si ça a planté ou pas,
+# et si finalement on préfère changer de méthode il faut attendre des heures
+# avant l'importation de 2 journées
+# En terme de performance, F. Ram avait montré que 10 minutes était
+# l'optimum de performance, donc entre 180 et 1200 me semble les bons
+# choix selon qu'on veuille du presque temps réél ou utiliser la machine
+# pendant les heures "creuses"
+# à coupler bien évidement avec les choix sur le lancement du cron
 #maxInterval = 172800
+
