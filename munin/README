@@ -1,0 +1,7 @@
+le fichier osm_replication_lag-osm2pgsql.conf doit être adapté avec le dossier qui contient le fichier
+state.txt, date de la base et doit être mis dans 
+/etc/munin/plugin-conf.d/
+
+le script osm_replication_lag-osm2pgsql doit être mis dans /etc/munin/plugins/
+ou, mieux, faire un lien vers celui présent dans ce dossier pour qu'il se
+mette à jour au prochain "git pull"
