@@ -1,0 +1,38 @@
+#!/bin/sh
+# -*- sh -*-
+
+# load the munin plugin helper
+#. $MUNIN_LIBDIR/plugins/plugin.sh
+
+# if no workingDirectory has been configures
+if [ ! $workingDirectory ]; then
+        # exit with an error
+        echo "no workingDirectory configured" >&2
+        exit 1
+fi
+
+# configuration section
+if [ "$1" = "config" ]; then
+
+        echo 'graph_title OSM PostGIS Database Replag'
+        echo 'graph_args --base 1000'
+        echo 'graph_vlabel minutes behind main database'
+        echo 'graph_category osm'
+
+        echo 'lag.label replication lag'
+        echo 'lag.draw LINE'
+        echo 'lag.cdef lag,60,/'
+        echo 'lag.critical 1000'
+        exit 0
+fi
+
+date_base_api=$(grep timestamp $workingDirectory/state.txt | cut -d= -f2 |
+sed s/"\\\\"/""/g | sed s/[ZT]/" "/g)
+date_base_api_seconde=$(date --utc +%s -d "$date_base_api")
+date_actuelle_utc_seconde=$(date +%s)
+
+lag_seconde=$(($date_actuelle_utc_seconde-$date_base_api_seconde))
+echo "lag.value $lag_seconde"
+
+exit 0
+

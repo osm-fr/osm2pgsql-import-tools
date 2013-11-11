@@ -6,7 +6,7 @@ baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
 # Setting to 0 disables this feature.
 
 #maxInterval = 1200
-#maxInterval = 60
+maxInterval = 60
 
 # Jocelyn - 2 journées
-maxInterval = 172800
+#maxInterval = 172800
