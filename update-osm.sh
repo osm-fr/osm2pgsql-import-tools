@@ -42,8 +42,14 @@ if [ ! -n "$LOAD" ] ; then
 		time $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
 	fi
 
+	#Veut-on une transformation par script lua ?
+	if [ -z "$lua_script_transform" ]; then
+	  $lua="--tag-transform-script $lua_script_transform"
+	else
+	  $lua=""
+	fi
 	#Import du diff, avec création de la liste des tuiles à ré-générer
-	time $osm2pgsql -C 64 --number-processes=4 -G -a -s -S $style --tag-transform-script style.lua -m -d $pgsql_base $DIFF_FILE
+	time $osm2pgsql -C 64 --number-processes=4 -G -a -s -S $style $lua --tag-transform-script $lua_script_transform -m -d $base_osm $DIFF_FILE
 
 	#import s'est bien passé a priori
 	if [ $? == 0 ] ; then
@@ -59,6 +65,3 @@ if [ ! -n "$LOAD" ] ; then
 else
 	echo "trop de charge"
 fi
-
-#exec 1>"$LOGFILE"
-#exec 2>"$ERRFILE"
