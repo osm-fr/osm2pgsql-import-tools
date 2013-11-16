@@ -16,5 +16,5 @@ time ../osm2pgsql/osm2pgsql --create --number-processes=4 -C 3000 -s -S ./defaul
 
 cat ./pre-post-import/after_create.sql | psql osm
 
-#Here if you want to receive an email when the import is done
-echo "fin import $1" | mail -s "import $1 fini" your@email.org -- -f your@email.org
+#Uncomment here and add your email to receive a mail when the import is done (yes, for planet imports it can take days !)
+#echo "fin import $1" | mail -s "import $1 fini" your@email.org -- -f your@email.org
