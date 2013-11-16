@@ -15,6 +15,10 @@ Installation
 
 * Il vous faudra aussi osmosis pour télécharger les diffs
 
+* copier config-sample.sh vers config.sh et adaptez les chemins
+
+* copier configuration-sample.txt vers configuration.txt et adaptez le chemin des diffs
+
 
 La suite n'est plus vraiment à jour, merci de bien lire les scripts, c'est là que vous aurrez la dernière info (et proposer de mettre à jour cet aide !)
 
@@ -63,10 +67,12 @@ et le nombre qu'il faut en télécharger à la fois
 
 On met ça dans le cron :
 # Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
+*/10 * * * * (sleep 15; cd /data/project/osm2pgsql/import-base-osm ; ./update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
 */10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm 
 
 = traitements réguliers =
 
 on met ça dans le cron :
 # Ce traitement est pas mal long, 1 fois par semaine suffit
+
 0 3 * * 0 cd /data/project/osm2pgsql/mise-a-jour-regulieres ; ./mise-a-jour.sh

@@ -1,6 +1,13 @@
 
 # The URL of the directory containing change files.
+#France only :
 baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
+
+#World :
+#baseUrl=http://planet.openstreetmap.org/replication/minute/
+
+#Europe only :
+baseUrl=http://download.openstreetmap.fr/replication/europe/minute/
 
 # Defines the maximum time interval in seconds to download in a single invocation.
 # Setting to 0 disables this feature.

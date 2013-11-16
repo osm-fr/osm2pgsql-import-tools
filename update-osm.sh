@@ -1,18 +1,12 @@
 #!/bin/bash
 # Script sur mesure pour nourrir la base postgres (schema osm2pgsql avec des diffs frais)
-
-#la première étape consiste à lancer
-#/home/ressource-for-osm/osmosis-0.32/bin/osmosis --rrii workingDirectory="."
-#(cela ne sert a pas grand chose a part créer le fichier de configuration)
-#puis editer le fichier configuration.txt et changer l'url et la durée du regroupement des diffs
-#ensuite télécharger le fichier state.txt avec la date du full import (un peu avant pour ne rien perdre)
-#le renomer en state.txt
-#et roule avec ce script qu'on peut lancer toutes les minutes, 10 minutes ou comme on veut tant que 
-#le fichier configuration.txt indique un interval plus grand que la fréquence de lancement sinon on ne rattrapera jamais
-#le retard sur les diffs générés en amont
-
 # le chevauchement de script est prévu par un fichier de lock
 #set -e
+
+d=$(dirname $0)
+. $d/config.sh
+
+
 DIFF_FILE="/dev/shm/diff.osc"
 WORKDIR="/data/work/osm2pgsql"
 #non utilisé sur osm7 :
@@ -45,11 +39,11 @@ if [ ! -n "$LOAD" ] ; then
 
 	# Si le fichier diff est toujours là, c'est que osm2pgsql n'a pas pu l'importer, on ne télécharge pas de nouveau
 	if ! test -e $DIFF_FILE ; then
-		time ../osmosis-0.43.1/bin/osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
+		time $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
 	fi
 
 	#Import du diff, avec création de la liste des tuiles à ré-générer
-	time ../osm2pgsql/osm2pgsql -C 64 --number-processes=4 -G -a -s -S ./default.style --tag-transform-script style.lua -m -d osm $DIFF_FILE
+	time $osm2pgsql -C 64 --number-processes=4 -G -a -s -S $style --tag-transform-script style.lua -m -d $pgsql_base $DIFF_FILE
 
 	#import s'est bien passé a priori
 	if [ $? == 0 ] ; then
