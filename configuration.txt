@@ -1,0 +1,12 @@
+
+# The URL of the directory containing change files.
+baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
+
+# Defines the maximum time interval in seconds to download in a single invocation.
+# Setting to 0 disables this feature.
+
+#maxInterval = 1200
+#maxInterval = 60
+
+# Jocelyn - 10h
+maxInterval = 36000
