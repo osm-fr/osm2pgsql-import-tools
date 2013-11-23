@@ -1,67 +1,112 @@
 #!/bin/bash
-# Script sur mesure pour nourrir la base postgres (schema osm2pgsql avec des diffs frais)
-# le chevauchement de script est prévu par un fichier de lock
-#set -e
+# update script for updating a postgresql osm2pgsql scheam with diffs
+# set -e
 
 d=$(dirname $0)
 . $d/config.sh
 
+temporary_diff_file=$work_dir/diff.osc
+file_with_import_timeings=$work_dir/diff-update-timing
 
-DIFF_FILE="/dev/shm/diff.osc"
-WORKDIR="/data/work/osm2pgsql"
-#non utilisé sur osm7 :
-EXPIRE_FILE=$WORKDIR"/expire.list"
+current_date="`date +%F-%R`"
+message_log_file=$work_dir/replication-${current_date}.log
+error_log_file=$work_dir/replication-${current_date}.err
 
-#Si on veut avoir la charge du système pour déterminer si elle est en dessous de 2 ou non
-LOAD=`uptime | grep -v "load average: [0-1]"`
+script_lock_pid_file=$work_dir/script_pid
+osm2pgsql_lock_pid_file=$work_dir/osm2pgsql_pid
+osmosis_lock_pid_file=$work_dir/osmosis_pid
 
-#Quand il faut rattraper le temps et que le diff sera insérer peu importe la charge (a commenter pour que les updates ne se fasse que en periode "calme"
-LOAD=""
-
-CURDATE="`date +%F-%R`"
-LOGFILE="$WORKDIR/replication-${CURDATE}.log"
-ERRFILE="$WORKDIR/replication-${CURDATE}.err"
-
-if [ ! -n "$LOAD" ] ; then
-
-        #si le fichier de lock a plus de 10h c'est vraiment anormal (sans doute plantage, on refait), on le vire
-        find ./lock -mmin  +600 -exec rm {} \; 2> /dev/null
-        # si un processus tourne deja avec un lock, on ne fait rien non plus
-        if [ -f lock ] ; then
-	        exit
-        fi
-	touch lock
-
-	# Osmosis a (avait?) tendance à planter et à bloquer le processus de mise à jour
-	# le lock étant géré en amont par ce script, celui-ci ne sert à rien
-	rm ./download.lock
-	set -x		# prints command executed
-
-	# Si le fichier diff est toujours là, c'est que osm2pgsql n'a pas pu l'importer, on ne télécharge pas de nouveau
-	if ! test -e $DIFF_FILE ; then
-		time $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $DIFF_FILE
-	fi
-
-	#Veut-on une transformation par script lua ?
-	if [ -z "$lua_script_transform" ]; then
-	  $lua="--tag-transform-script $lua_script_transform"
-	else
-	  $lua=""
-	fi
-	#Import du diff, avec création de la liste des tuiles à ré-générer
-	time $osm2pgsql -C 64 --number-processes=4 -G -a -s -S $style $lua --tag-transform-script $lua_script_transform -m -d $base_osm $DIFF_FILE
-
-	#import s'est bien passé a priori
-	if [ $? == 0 ] ; then
-		rm $DIFF_FILE
-	fi
-	
-	set +x
-	
-	rm lock
-
-	date
-
-else
-	echo "trop de charge"
+function time_spent {
+if [ $with_timeings == 0 ] ; then
+  return;
 fi
+if [ $1 == "start" ] ; then
+        deb=`date +%s`
+else
+	date=$(date "+%Y-%m-%d %H:%M:%S")
+        echo "$date,$2,$((`date +%s`-$deb))" >> $file_with_import_timeings
+fi
+}
+
+if [ $verbosity == 0 ] ; then
+  dev_null_redirection="2>/dev/null >/dev/null"
+else
+  dev_null_redirection=""
+fi
+
+#The pid file is older than 3 hours, we consider something went wrong (serveur reboot, task stucked)
+#we kill everything that could still be live
+#This is however suboptimal, if some other process got that pid (like after a server crash, we might kill some innoncent process)
+if test -f $script_lock_pid_file ; then
+  if test `find $script_lock_pid_file -mmin +300` ; then
+    for pid_file in $osmosis_lock_pid_file $osm2pgsql_lock_pid_file $script_lock_pid_file; do
+      kill -9 `cat $pid_file` 2>/dev/null
+      rm $pid_file 2>/dev/null
+    done
+  else # The previous running of that script is still running, exit
+    exit
+  fi
+fi
+#record the shell script's pid
+echo $$ > $script_lock_pid_file
+
+# Osmosis creates it's own lock duplicate of our own pid/lock system
+# I happens once in a while that osmosis get stucked or crashes, removing that lock
+# for running it again is what I came to as a lazy solution
+rm $d/download.lock 2>/dev/null
+
+if [ $verbosity == 1 ] ; then
+  set -x # prints command executed
+fi
+
+# diff file still here ? we suppose it's the last one that should still be applied
+if ! test -e $temporary_diff_file ; then
+  time_spent start
+  $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
+  echo $! > $osmosis_lock_pid_file
+  wait $!
+  rm $osmosis_lock_pid_file
+  time_spent stop osmosis
+fi
+
+#Veut-on une transformation par script lua ?
+if [ -z "$lua_script_transform" ]; then
+  lua="--tag-transform-script $lua_script_transform"
+else
+  lua=""
+fi
+
+if [ -z "$osm2pgsql_expire_option" ]; then
+  expire_options="$osm2pgsql_expire_option -o $osm2pgsql_expire_tile_list"
+else
+  expire_options=""
+fi
+
+#Import du diff, avec création de la liste des tuiles à ré-générer
+time_spent start
+$osm2pgsql -a -s -S $style $lua -d $base_osm $osm2pgsql_options $expire_options $temporary_diff_file $dev_null_redirection &
+echo $! > $osm2pgsql_lock_pid_file
+wait $!
+rm $osm2pgsql_lock_pid_file
+time_spent stop osm2pgsql
+
+if [ -z "$rendering_styles_tiles_to_expire" ]; then
+  #when a rendering is used, expire the tiles for it
+  time_spent start
+  for sheet in $rendering_styles_tiles_to_expire ; do 
+	  cat $osm2pgsql_expire_tile_list | render_expired --map=$sheet $render_expired_options $dev_null_redirection
+  done	
+  time_spent stop tile_expiry
+  rm $osm2pgsql_expire_tile_list
+fi
+
+#looks like everything was well
+if [ $? == 0 ] ; then
+  rm $temporary_diff_file
+  rm $script_lock_pid_file
+fi
+
+if [ $verbosity == 1 ] ; then
+  set +x
+fi
+

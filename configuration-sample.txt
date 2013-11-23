@@ -7,7 +7,7 @@ baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
 #baseUrl=http://planet.openstreetmap.org/replication/minute/
 
 #Europe only :
-baseUrl=http://download.openstreetmap.fr/replication/europe/minute/
+#baseUrl=http://download.openstreetmap.fr/replication/europe/minute/
 
 # Defines the maximum time interval in seconds to download in a single invocation.
 # Setting to 0 disables this feature.
@@ -26,5 +26,5 @@ maxInterval = 3600
 # choix selon qu'on veuille du presque temps réél ou utiliser la machine
 # pendant les heures "creuses"
 # à coupler bien évidement avec les choix sur le lancement du cron
-#maxInterval = 172800
+# maxInterval = 172800
 
