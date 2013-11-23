@@ -1,4 +1,5 @@
-Ce dossier est maintenau par git, toute bidouille à la main pourrait être écrasée par une future synchro
+Ce dossier est maintenau par git, toute bidouille à la main pourrait être écrasée par une future synchro.
+Paramétrez plutôt les deux fichiers de configuration !
 
 osm2pgsql-import-tools
 ======================
@@ -15,9 +16,19 @@ Installation
 
 * Il vous faudra aussi osmosis pour télécharger les diffs
 
-* copier config-sample.sh vers config.sh et adaptez les chemins
+* copier ./config/config-sample.sh vers ./config.sh et adaptez les chemins & les options (ou prenez un fichier déjà existant d'exemple)
 
-* copier configuration-sample.txt vers configuration.txt et adaptez le chemin des diffs
+* copier ./config/configuration-sample.txt vers ./configuration.txt et adaptez le chemin des diffs (ou prenez un fichier déjà existant d'exemple)
+
+options :
+---------
+* If you want some more indexes and simplified geometries (usefull for layers.openstreetmap.fr and suivi communes) :
+``
+. ./config.sh ; cat ./pre-post-import/after_create.sql | psql $base_osm
+``
+
+
+
 
 
 La suite n'est plus vraiment à jour, merci de bien lire les scripts, c'est là que vous aurrez la dernière info (et proposer de mettre à jour cet aide !)

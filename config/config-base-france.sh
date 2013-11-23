@@ -12,10 +12,10 @@ osmosis=../osmosis-0.43.1/bin/osmosis
 base_osm=osm
 
 #style you want to use
-style=./default.style
+style=./styles/default.style
 
 #lua script to apply on styles (leave it empty if you don't want to use lua transform script)
-lua_script_transform=./style.lua
+lua_script_transform=""
 
 #directory where temporary diff files will be stored, timeing for import, pid lock files and log files 
 #/run/shm/ for a ram disk place is good if you don't care about timeings and logs after reboot
@@ -35,8 +35,9 @@ osm2pgsql_options="-C 64 --number-processes=4 -m -G"
 
 
 #Rendering related
-#osm2pgsql expire list creation options (if empyt no expiration list is built)
-osm2pgsql_expire_option="-e12-17"
+#osm2pgsql expire list creation options (if empty no expiration list is built)
+#osm2pgsql_expire_option="-e12-17"
+osm2pgsql_expire_option=""
 osm2pgsql_expire_tile_list=$work_dir/expire.list
 
 #List of rendering style to run thru the render_expired commands
