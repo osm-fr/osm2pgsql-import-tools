@@ -12,9 +12,9 @@ current_date="`date +%F-%R`"
 message_log_file=$work_dir/replication-${current_date}.log
 error_log_file=$work_dir/replication-${current_date}.err
 
-script_lock_pid_file=$work_dir/script_pid
-osm2pgsql_lock_pid_file=$work_dir/osm2pgsql_pid
-osmosis_lock_pid_file=$work_dir/osmosis_pid
+script_lock_pid_file=$work_dir/script.pid
+osm2pgsql_lock_pid_file=$work_dir/osm2pgsql.pid
+osmosis_lock_pid_file=$work_dir/osmosis.pid
 
 function time_spent {
 if [ $with_timeings == 0 ] ; then
@@ -62,7 +62,7 @@ fi
 # diff file still here ? we suppose it's the last one that should still be applied
 if ! test -e $temporary_diff_file ; then
   time_spent start
-  $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
+  eval $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
   echo $! > $osmosis_lock_pid_file
   wait $!
   rm $osmosis_lock_pid_file
@@ -77,7 +77,7 @@ fi
 
 #Import du diff, avec création de la liste des tuiles à ré-générer
 time_spent start
-$osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file $dev_null_redirection &
+$osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file &
 echo $! > $osm2pgsql_lock_pid_file
 wait $!
 rm $osm2pgsql_lock_pid_file
