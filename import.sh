@@ -13,14 +13,24 @@ fi
 filename=$(basename "$1")
 extension="${filename##*.}"
 
-if [ $1 =~ "http://" ] || $1 =~ "ftp://" ] || $1 =~ "https://" ] ; then
-  wget_pipe="wget -q -O - $1 |"
+if [ $extension == "pbf" ] ; then
+  parsing_mode="pbf"
+  #FIXME I can't find a way to pass the | in the variable
+  external_bunzip2="cat"
 else
-  wget_pipe="cat $1 |"
+  external_bunzip2="bunzip2 -c"
+  parsing_mode="libxml2"
 fi
 
+if [[ $1 =~ "http://" ]] || [[ $1 =~ "ftp://" ]] || [[ $1 =~ "https://" ]] ; then
+  data_pipe="wget -q -O - $1 "
+else
+  data_pipe="cat $1 "
+fi
 
-time $wget_pipe $osm2pgsql --create -s -S $style $lua -d $base_osm $osm2pgsql_options $expire_options $temporary_diff_file
+echo $data_pipe $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
+
+$data_pipe | $external_bunzip2 | $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
 
 
 #Uncomment here and add your email to receive a mail when the import is done (yes, for planet imports it can take days !)

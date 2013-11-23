@@ -69,13 +69,6 @@ if ! test -e $temporary_diff_file ; then
   time_spent stop osmosis
 fi
 
-#Veut-on une transformation par script lua ?
-if [ -z "$lua_script_transform" ]; then
-  lua="--tag-transform-script $lua_script_transform"
-else
-  lua=""
-fi
-
 if [ -z "$osm2pgsql_expire_option" ]; then
   expire_options="$osm2pgsql_expire_option -o $osm2pgsql_expire_tile_list"
 else
@@ -84,7 +77,7 @@ fi
 
 #Import du diff, avec création de la liste des tuiles à ré-générer
 time_spent start
-$osm2pgsql -a -s -S $style $lua -d $base_osm $osm2pgsql_options $expire_options $temporary_diff_file $dev_null_redirection &
+$osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file $dev_null_redirection &
 echo $! > $osm2pgsql_lock_pid_file
 wait $!
 rm $osm2pgsql_lock_pid_file

@@ -2,7 +2,7 @@
 #osm2pgsql=osm2pgsql
 #osmosis=osmosis
 #osmconvert=osmconvert
-#if relative, path are relative to this config file (in doubt, use absolute paths)
+#if relative, path are relative to the root of the git project (in doubt, use absolute paths)
 
 #binary paths
 osm2pgsql=../osm2pgsql/osm2pgsql
@@ -10,12 +10,6 @@ osmosis=../osmosis-0.43.1/bin/osmosis
 
 #database name to choose
 base_osm=osm
-
-#style you want to use
-style=./styles/default.style
-
-#lua script to apply on styles (leave it empty if you don't want to use lua transform script)
-lua_script_transform=""
 
 #directory where temporary diff files will be stored, timeing for import, pid lock files and log files 
 #/run/shm/ for a ram disk place is good if you don't care about timeings and logs after reboot
@@ -30,8 +24,11 @@ verbosity=0
 #record timeings of osm2pgsql, osmosis and tile generation processing
 with_timeings=0
 
-#For tweaking some special options (don't add database statement here, see previously)
-osm2pgsql_options="-C 64 --number-processes=4 -m -G"
+#For osm2pgsql options  (don't add database statement here, see previously)
+#--tag-transform-script ./config/script.lua
+common_osm2pgsql_options="--number-processes=4 -m -G -s -S ./config/default.style -d $base_osm"
+diff_osm2pgsql_options="-a -C 64 $common_osm2pgsql_options"
+import_osm2pgsql_options="--create --unlogged -C 3000 $common_osm2pgsql_options"
 
 
 #Rendering related
