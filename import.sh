@@ -33,5 +33,6 @@ echo $data_pipe $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
 $data_pipe | $external_bunzip2 | $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
 
 
-#Uncomment here and add your email to receive a mail when the import is done (yes, for planet imports it can take days !)
-#echo "fin import $1" | mail -s "import $1 fini" your@email.org -- -f your@email.org
+if [ -z $end_of_import_email ] ; then
+  echo "End of $1 import with osm2pgsql on `hostname`" | mail -s "This email does'nt tell you that this import went well, it tells you it ended ;-)" $end_of_import_email -- -f $end_of_import_email
+fi

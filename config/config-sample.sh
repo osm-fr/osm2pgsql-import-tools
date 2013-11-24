@@ -41,3 +41,6 @@ osm2pgsql_expire_tile_list=$work_dir/expire.list
 #Be sure that this scrpt as the filesystem rights to access tiles 
 rendering_styles_tiles_to_expire="2u openriverboatmap hot"
 render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
+
+#Email to send end of initial import notice
+end_of_import_email="sylvain@letuffe.org"

@@ -2,4 +2,4 @@
 #France only :
 baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
 
-maxInterval = 6000
+maxInterval = 7200

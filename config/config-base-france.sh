@@ -26,7 +26,7 @@ with_timeings=0
 
 #For osm2pgsql options  (don't add database statement here, see previously)
 #--tag-transform-script ./config/script.lua
-common_osm2pgsql_options="--number-processes=4 -m -G -s --tag-transform-script ./config/base-france-transform.lua -S ./config/default.style -d $base_osm"
+common_osm2pgsql_options="--number-processes=4 -m -k -G -s --tag-transform-script ./config/base-france-transform.lua -S ./config/style-osm2pgsql-pour-base-france.style -d $base_osm"
 diff_osm2pgsql_options="-a -C 64 $common_osm2pgsql_options"
 import_osm2pgsql_options="--create --unlogged -C 3000 $common_osm2pgsql_options"
 
