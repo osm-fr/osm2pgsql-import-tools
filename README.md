@@ -7,18 +7,28 @@ osm2pgsql-import-tools
 1 scripts pour importer une base osm au schéma osm2pgsql
 et 1 pour la maintenir à jour avec des diffs.
 
-je tente au mieux de gérer les problèmes qui peuvent survenir, d'avoir le plus possible en paramètre, avoir un suivi de perf
+je tente au mieux de gérer les problèmes qui peuvent survenir, d'avoir le plus possible en paramètre, avoir un suivi de perf et d'éviter de trifouiller les scripts
+en n'ayant à intervenir que dans les fichiers du dossier "config"
 
 Installation
 ============
 
 * Voir http://wiki.openstreetmap.org/wiki/Osm2pgsql qui détaille comment compiler et comment fonctionne osm2pgsql (avec support lua et pbf).
 
-* Il vous faudra aussi osmosis pour télécharger les diffs
+* Il vous faudra aussi osmosis pour télécharger les diffs (voir wiki aussi)
 
-* copier ./config/config-sample.sh vers ./config.sh et adaptez les chemins & les options (ou prenez un fichier déjà existant d'exemple)
+* copier ./config/config-sample.sh vers ./config.sh et adaptez les chemins & les options (ou prenez un fichier déjà existant d'exemple ou faite un lien symbolique de ./config.sh vers ceux déjà prêt dans ./config/ selon )
 
-* copier ./config/configuration-sample.txt vers ./configuration.txt et adaptez le chemin des diffs (ou prenez un fichier déjà existant d'exemple)
+* pareil pour ./config/configuration-sample.txt qui devient ./configuration.txt
+
+Lancement
+=========
+
+Import initial
+--------------
+./import.sh http://la-bas/un-fichier.osm.bz2 (ou pbf)
+ou
+./import.sh /truc/fichier.osm.bz2 (ou pbf)
 
 options :
 ---------
@@ -27,6 +37,16 @@ options :
 . ./config.sh ; cat ./pre-post-import/after_create.sql | psql $base_osm
 ``
 
+Maintenir à jour
+----------------
+Trouver le fichier state.txt qui soit quelques minutes avant la date de génération du fichier que vous avez utilisé et placer le 
+dans le dossier racine (au même niveau que ce fichier README.md)
+
+on met ça dans le cron :
+# Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
+*/10 * * * * (sleep 15; cd /data/project/osm2pgsql/import-base-osm ; ./update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
+ou en plus simple :
+*/10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm  ; ./update-osm.sh 
 
 
 
@@ -47,23 +67,6 @@ osm2pgsql
 
 Se connecter avec le compte shell osm2pgsql
 
-@ Import des données osm
-cd /import-base-osm
-usage : ./import.sh <osm.bz2 file to import>
-(le pbf n'est pas prévu, a vous de le convertir avec osmconvert par exemple)
-
-le fichier default.style défini les objets a importer selon leurs tags
-présents dans ce fichier
-
-@ traitement à lancer ensuite
-./pre-post-import/after_create.sql : la liste des post-traitements à faire
-après import (qui est appelé par le script import.sh)
-
-
-@ autres données à importer
-cd ./sql-dumps
-on importe tous les sql qui sont là :
-gunzip -c truc.sql.gz | psql osm2pgsql
 
 @ gestion des roles d'accès
 se connecter en shell postgresql
@@ -76,14 +79,4 @@ for x in `cat roles.txt` ; do u=`echo $x | cut -f1 -d\;` ; p=`echo $x | cut -f2 
 configuration.txt : C'est l'endroit ou on indique la provenance des diffs,
 et le nombre qu'il faut en télécharger à la fois
 
-On met ça dans le cron :
-# Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
-*/10 * * * * (sleep 15; cd /data/project/osm2pgsql/import-base-osm ; ./update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
-*/10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm 
 
-= traitements réguliers =
-
-on met ça dans le cron :
-# Ce traitement est pas mal long, 1 fois par semaine suffit
-
-0 3 * * 0 cd /data/project/osm2pgsql/mise-a-jour-regulieres ; ./mise-a-jour.sh
