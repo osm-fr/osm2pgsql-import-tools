@@ -16,6 +16,9 @@ script_lock_pid_file=$work_dir/script.pid
 osm2pgsql_lock_pid_file=$work_dir/osm2pgsql.pid
 osmosis_lock_pid_file=$work_dir/osmosis.pid
 
+#create work_dir
+mkdir $work_dir 2>/dev/null
+
 function time_spent {
 if [ $with_timeings == 0 ] ; then
   return;
