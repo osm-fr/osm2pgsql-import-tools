@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. $(dirname $0)/../config.sh
+
+if [ -z $1 ] ; then
+  etape=osm2pgsql
+else
+  etape=$1
+fi
+
+echo "cet outil calcul la moyenne de temps pris par l'étape passé en paramètre qui peut être : osm2pgsql, osmosis ou expire_tiles"
+echo "votre choix est $etape"
+
+i=0 
+tot=0
+for x in `grep $etape $work_dir/diff-update-timing | cut -f2 -d,` ; do 
+  i=$(($i+1)) 
+  tot=$(($tot+$x)) 
+done 
+echo "l'étape de traitement $etape prend en moyenne $(($tot/$i)) secondes"
