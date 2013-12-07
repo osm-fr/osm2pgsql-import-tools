@@ -46,5 +46,8 @@ osm2pgsql_expire_tile_list=$work_dir/expire.list
 rendering_styles_tiles_to_expire="2u openriverboatmap hot"
 render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 
+#You can use this to execute the render_expired with another user like "sudo -u www-data"
+render_expired_prefix=""
+
 #Email to send end of initial import notice
 end_of_import_email=""

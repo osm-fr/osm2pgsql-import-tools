@@ -89,7 +89,7 @@ if [ ! -z "$rendering_styles_tiles_to_expire" ]; then
   #when a rendering is used, expire the tiles for it
   time_spent start
   for sheet in $rendering_styles_tiles_to_expire ; do 
-	cat $osm2pgsql_expire_tile_list | render_expired --map=$sheet $render_expired_options $dev_null_redirection
+	cat $osm2pgsql_expire_tile_list | $render_expired_prefix render_expired --map=$sheet $render_expired_options $dev_null_redirection
   done	
   time_spent stop tile_expiry
   rm $osm2pgsql_expire_tile_list

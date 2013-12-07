@@ -21,6 +21,9 @@ Installation
 
 * pareil pour ./config/configuration-sample.txt qui devient ./configuration.txt
 
+* pareil enfin pour un style d'osm2pgsql que vous pouvez copier de ./config/*.style vers osm2pgsql-choosen.style 
+(vous pouvez aussi laisser la config par défaut qui va chercher le ./config/default.style, mais si quelqu'un met à jour le style par défaut, ça pourrait vous poser problème)
+
 Lancement
 =========
 
