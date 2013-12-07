@@ -1,7 +1,6 @@
 #!/bin/bash
 
-d=$(dirname $0)
-. $d/config.sh
+. $(dirname $0)/config.sh
 
 if [ "a$1" == "a" ]; then
 echo "usage : ./import.sh <.bz2 or .pbf file to import (can be an http/https/ftp url or local file) >"

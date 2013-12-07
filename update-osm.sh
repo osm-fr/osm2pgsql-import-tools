@@ -2,8 +2,7 @@
 # update script for updating a postgresql osm2pgsql scheam with diffs
 # set -e
 
-d=$(dirname $0)
-. $d/config.sh
+. $(dirname $0)/config.sh
 
 temporary_diff_file=$work_dir/diff.osc
 file_with_import_timeings=$work_dir/diff-update-timing
@@ -12,6 +11,7 @@ current_date="`date +%F-%R`"
 message_log_file=$work_dir/replication-${current_date}.log
 error_log_file=$work_dir/replication-${current_date}.err
 
+#FIXME : pid file should go into a more appropriate zone such as /run/ on debian, but I don't really want to hard code it for debian only ;-)
 script_lock_pid_file=$work_dir/script.pid
 osm2pgsql_lock_pid_file=$work_dir/osm2pgsql.pid
 osmosis_lock_pid_file=$work_dir/osmosis.pid
@@ -34,7 +34,7 @@ else
   dev_null_redirection=""
 fi
 
-#The pid file is older than 3 hours, we consider something went wrong (serveur reboot, task stucked)
+#The pid file is older than 300 minutes (maybe make this a parameter ?), we consider something went wrong (serveur reboot, task stucked)
 #we kill everything that could still be live
 #This is however suboptimal, if some other process got that pid (like after a server crash, we might kill some innoncent process)
 if test -f $script_lock_pid_file ; then
@@ -53,7 +53,7 @@ echo $$ > $script_lock_pid_file
 # Osmosis creates it's own lock duplicate of our own pid/lock system
 # I happens once in a while that osmosis get stucked or crashes, removing that lock
 # for running it again is what I came to as a lazy solution
-rm $d/download.lock 2>/dev/null
+rm $project_dir/download.lock 2>/dev/null
 
 if [ $verbosity == 1 ] ; then
   set -x # prints command executed
@@ -69,7 +69,7 @@ if ! test -e $temporary_diff_file ; then
   time_spent stop osmosis
 fi
 
-if [ -z "$osm2pgsql_expire_option" ]; then
+if [ ! -z "$osm2pgsql_expire_option" ]; then
   expire_options="$osm2pgsql_expire_option -o $osm2pgsql_expire_tile_list"
 else
   expire_options=""
@@ -80,21 +80,23 @@ time_spent start
 $osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file &
 echo $! > $osm2pgsql_lock_pid_file
 wait $!
+osm2pgsql_exit_code=$?
+
 rm $osm2pgsql_lock_pid_file
 time_spent stop osm2pgsql
 
-if [ -z "$rendering_styles_tiles_to_expire" ]; then
+if [ ! -z "$rendering_styles_tiles_to_expire" ]; then
   #when a rendering is used, expire the tiles for it
   time_spent start
   for sheet in $rendering_styles_tiles_to_expire ; do 
-	  cat $osm2pgsql_expire_tile_list | render_expired --map=$sheet $render_expired_options $dev_null_redirection
+	cat $osm2pgsql_expire_tile_list | render_expired --map=$sheet $render_expired_options $dev_null_redirection
   done	
   time_spent stop tile_expiry
   rm $osm2pgsql_expire_tile_list
 fi
 
 #looks like everything was well
-if [ $? == 0 ] ; then
+if [ $osm2pgsql_exit_code == 0 ] ; then
   rm $temporary_diff_file
   rm $script_lock_pid_file
 fi
