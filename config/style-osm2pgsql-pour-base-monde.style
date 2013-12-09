@@ -159,8 +159,6 @@ way         area:highway            text    phstore
 # These are tags that are generally regarded as useless for most rendering.
 
 #sylvain@letuffe : Finalement, ca supprime bien trop de truc tout ca, et comme on risque d'en avoir besoin un jour pour un traitement de type "pas rendu"
-#je prefere jouer secure et ne supprimer que created_by (ca ferait pas mal de donnee et j'imagine mal son utilie, mais c'est peut-etre possible)
+#je prefere jouer secure et ne rien supprimer, pourvu que ca rentre
 
 
-# Tags generally dropped by editors, not otherwise covered
-node,way    created_by              text    delete
