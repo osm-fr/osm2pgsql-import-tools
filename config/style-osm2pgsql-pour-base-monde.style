@@ -157,70 +157,10 @@ way         area:highway            text    phstore
 
 # Deleted tags
 # These are tags that are generally regarded as useless for most rendering.
-# Most of them are from imports or intended as internal information for mappers
-# Some of them are automatically deleted by editors.
-# If you want some of them, perhaps for a debugging layer, just delete the lines.
 
-# These tags are used by mappers to keep track of data.
-# They aren't very useful for rendering.
-node,way    note                    text    delete
-node,way    note:*                  text    delete
-node,way    source                  text    delete
-node,way    source_ref              text    delete
-node,way    source:*                text    delete
-node,way    attribution             text    delete
-node,way    comment                 text    delete
-node,way    fixme                   text    delete
+#sylvain@letuffe : Finalement, ca supprime bien trop de truc tout ca, et comme on risque d'en avoir besoin un jour pour un traitement de type "pas rendu"
+#je prefere jouer secure et ne supprimer que created_by (ca ferait pas mal de donnee et j'imagine mal son utilie, mais c'est peut-etre possible)
+
 
 # Tags generally dropped by editors, not otherwise covered
 node,way    created_by              text    delete
-node,way    odbl                    text    delete
-node,way    odbl:note               text    delete
-node,way    SK53_bulk:load          text    delete
-
-# Lots of import tags
-# TIGER (US)
-node,way    tiger:*                 text    delete
-
-# NHD (US)
-# NHD has been converted every way imaginable
-node,way    NHD:*                   text    delete
-node,way    nhd:*                   text    delete
-
-# GNIS (US)
-node,way    gnis:*                  text    delete
-
-# Geobase (CA)
-node,way    geobase:*               text    delete
-# NHN (CA)
-node,way    accuracy:meters         text    delete
-node,way    sub_sea:type            text    delete
-node,way    waterway:type           text    delete
-
-# KSJ2 (JA)
-# See also note:ja and source_ref above
-node,way    KSJ2:*                  text    delete
-# Yahoo/ALPS (JA)
-node,way    yh:*                    text    delete
-
-# osak (DK)
-node,way    osak:*                  text    delete
-
-# kms (DK)
-node,way    kms:*                   text    delete
-
-# ngbe (ES)
-# See also note:es and source:file above
-node,way    ngbe:*                  text    delete
-
-# naptan (UK)
-node,way    naptan:*                text    delete
-
-# Corine (CLC) (Europe)
-node,way    CLC:*                   text    delete
-
-# misc
-node,way    3dshapes:ggmodelk       text    delete
-node,way    AND_nosr_r              text    delete
-node,way    import                  text    delete
-node,way    it:fvg:*                text    delete
