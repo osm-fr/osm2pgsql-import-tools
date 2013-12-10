@@ -65,7 +65,7 @@ fi
 # diff file still here ? we suppose it's the last one that should still be applied
 if ! test -e $temporary_diff_file ; then
   time_spent start
-  eval $osmosis --rri workingDirectory="." --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
+  eval $osmosis --rri workingDirectory="$project_dir" --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
   echo $! > $osmosis_lock_pid_file
   wait $!
   rm $osmosis_lock_pid_file
