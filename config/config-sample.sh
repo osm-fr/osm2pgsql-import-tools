@@ -44,7 +44,12 @@ osm2pgsql_expire_tile_list=$work_dir/expire.list
 #List of rendering style to run thru the render_expired commands
 #Be sure that this scrpt as the filesystem rights to access tiles 
 #separate style name by a space like "style1 style2"
-rendering_styles_tiles_to_expire="2u openriverboatmap hot"
+#if empty, no expiration will occure, you'll have to do it with the expiry tile files in an other way
+
+#With this hack it will automatically expire styles from the /etc/renderd.conf file
+#rendering_styles_tiles_to_expire="$(grep "^\[" /etc/renderd.conf | egrep -v "(renderd|mapnik)" | cut -d"[" -f2 | cut -d"]" -f1)"
+rendering_styles_tiles_to_expire=""
+
 render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 
 #You can use this to execute the render_expired with another user like "sudo -u www-data"
