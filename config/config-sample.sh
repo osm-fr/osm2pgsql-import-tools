@@ -15,7 +15,7 @@ osmosis=$project_dir/../osmosis/bin/osmosis
 base_osm=osm
 
 #directory where temporary diff files will be stored, timeing for import, pid lock files and log files 
-#/run/shm/ for a ram disk place is good if you don't care about timeings and logs after reboot
+#/run/shm for a ram disk place is good if you don't care about timeings and logs after reboot
 work_dir=/run/shm
 
 #log errors and command output in the $work_dir (1 is yes, 0 is no)
