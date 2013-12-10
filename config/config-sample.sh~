@@ -4,8 +4,7 @@ project_dir=$(dirname $0)
 #If those are in your path just set :
 #osm2pgsql=osm2pgsql
 #osmosis=osmosis
-#if you want relative path use $project_dir instead like $project_dir/../path-to-binary or $project_dir/path-to-binary
-#$project_dir beeing the directory this config.sh file is
+#the default is to suppose you find them in ../$tool/ relative to the root of where you put the import and update scipts
 
 #binary paths
 osm2pgsql=$project_dir/../osm2pgsql/osm2pgsql
@@ -46,9 +45,6 @@ osm2pgsql_expire_tile_list=$work_dir/expire.list
 #separate style name by a space like "style1 style2"
 rendering_styles_tiles_to_expire="2u openriverboatmap hot"
 render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
-
-#You can use this to execute the render_expired with another user like "sudo -u www-data"
-render_expired_prefix=""
 
 #Email to send end of initial import notice
 end_of_import_email=""
