@@ -1,0 +1,17 @@
+roles à créer dans la base osm2pgsql : 
+Ils sont dans le fichiers roles.txt
+
+un truc du genre devrait tous les créer d'un coup, si besoin de les remettre :
+
+for x in `cat roles.txt` ; do u=`echo $x | cut -f1 -d\;` ; p=`echo $x | cut -f2 -d\;` ; ./creation-roles.sh $u $p ; done
+
+mapnik
+======
+ce compte est utilisé par layers.openstreetmap.fr en local et par l'outil de suivi de commune sur osm7
+
+
+osm2gis
+=======
+Utilisé, à distance, par http://www.osm974.re/osm2gis/ (qui sera déplacé en
+local ultérieurement)
+
