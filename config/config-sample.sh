@@ -29,7 +29,8 @@ with_timeings=1
 
 #For osm2pgsql options (we could set the database name in it, but if an external script wants the database name, 
 #it would be easier to keep it in a variable) 
-#--tag-transform-script ./config/script.lua
+#--tag-transform-script $project_dir/script.lua (pensez à faire des chemin absolu ou utilisez $project_dir sinon, ça foire quand c'est pas lancé du dossier en cours)
+
 common_osm2pgsql_options="--number-processes=4 -m -G -s -S $project_dir/config/default.style -d $base_osm"
 diff_osm2pgsql_options="-a -C 64 $common_osm2pgsql_options"
 import_osm2pgsql_options="--create --unlogged -C 3000 $common_osm2pgsql_options"
