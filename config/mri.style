@@ -1,3 +1,5 @@
+#This is the style used by the http://maps.refuges.info instance of an hiking map
+
 # This is the style file that matches the old version of osm2pgsql, which
 # did not make distinctions between tags for nodes and for ways. There are a
 # number of optimisations that can be applied here. Firstly, certain tags
@@ -27,26 +29,14 @@
 #node,way   source       text         deleted   # This indicates that we shouldn't store them
 #node,way   ts           timestamp    linear
 
-#sly's special
-#node,way   fixme        text         linear
-#node,way   FIXME        text	     linear
-#node,way   note         text         linear 
-#node,way   validate:no_name text     linear
-#node,way   validate:no_ref text      linear
-#node,way   validate:my_own text      linear
-#node,way   ref:INSEE    text         linear
-#node,way   ref:sandre	text		linear
-
-
-#sly's mountain stuff
+#maps.refuges.info's mountain stuff
 node       mountain_pass text        linear
 node,way   ele		text	     linear
 way        smoothness   text         linear
 way	   sac_scale    text         linear
 way        trail_visibility text     linear
 way	   protect_id	text	     linear
-
-#end sly
+#end maps.refuges.info's tweaks
 
 #Ont été viré pour limiter la place, car peu utile pour moi :
 #node,way   bicycle      text         nocache
