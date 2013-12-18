@@ -13,7 +13,7 @@ echo "votre choix est $etape"
 
 i=0 
 tot=0
-for x in `grep $etape $work_dir/diff-update-timing | cut -f2 -d,` ; do 
+for x in `grep $etape $work_dir/diff-update-timing | cut -f3 -d,` ; do 
   i=$(($i+1)) 
   tot=$(($tot+$x)) 
 done 
