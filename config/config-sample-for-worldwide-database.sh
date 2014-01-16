@@ -18,10 +18,6 @@ base_osm=osm
 #/run/shm/ for a ram disk place is good if you don't care about timeings and logs after reboot
 work_dir=/run/shm/osm2pgsql-import
 
-
-#log errors and command output in the $work_dir (1 is yes, 0 is no)
-with_log=0
-
 #0 doesn't print anything out, 1 prints every commands that we run + output of commands
 verbosity=1
 
@@ -51,4 +47,4 @@ render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 render_expired_prefix="sudo -u www-data"
 
 #Email to send end of initial import notice
-end_of_import_email="alertes@letuffe.org"
+end_of_import_email=""

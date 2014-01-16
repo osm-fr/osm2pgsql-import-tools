@@ -4,6 +4,16 @@
 
 . $(dirname $0)/config.sh
 
+if [ $verbosity == 1 ] ; then
+  set -x # prints command executed
+fi
+
+if [ $verbosity == 0 ] ; then
+  dev_null_redirection=">/dev/null"
+else
+  dev_null_redirection="2>/dev/null >/dev/null"
+fi
+
 temporary_diff_file=$work_dir/diff.osc
 file_with_import_timeings=$work_dir/diff-update-timing
 
@@ -31,11 +41,6 @@ else
 fi
 }
 
-if [ $verbosity == 0 ] ; then
-  dev_null_redirection="2>/dev/null >/dev/null"
-else
-  dev_null_redirection=""
-fi
 
 #The pid file is older than 300 minutes (maybe make this a parameter ?), we consider something went wrong (serveur reboot, task stucked)
 #we kill everything that could still be live
@@ -58,9 +63,6 @@ echo $$ > $script_lock_pid_file
 # for running it again is what I came to as a lazy solution
 rm $project_dir/download.lock 2>/dev/null
 
-if [ $verbosity == 1 ] ; then
-  set -x # prints command executed
-fi
 
 # diff file still here ? we suppose it's the last one that should still be applied
 if ! test -e $temporary_diff_file ; then
@@ -74,7 +76,7 @@ fi
 
 if [ ! -s $temporary_diff_file ] ; then
 	rm $script_lock_pid_file
-	eval echo "Osmosis didn t manage to download and create a non null diff. Exiting now." $dev_null_redirection
+	echo "Osmosis didn t manage to download and create a non null diff. Exiting now." 1>&2
 	exit
 fi
 
@@ -109,6 +111,8 @@ fi
 if [ $osm2pgsql_exit_code == 0 ] ; then
   rm $temporary_diff_file
   rm $script_lock_pid_file
+else
+  echo "osm2pgsql failed at importing diffs, more information if you enable verbosity." 1>&2
 fi
 
 if [ $verbosity == 1 ] ; then
