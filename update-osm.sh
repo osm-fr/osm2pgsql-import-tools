@@ -72,6 +72,13 @@ if ! test -e $temporary_diff_file ; then
   time_spent stop osmosis
 fi
 
+if [ ! -s $temporary_diff_file ] ; then
+	rm $script_lock_pid_file
+	eval echo "Osmosis didn t manage to download and create a non null diff. Exiting now." $dev_null_redirection
+	exit
+fi
+
+exit
 if [ ! -z "$osm2pgsql_expire_option" ]; then
   expire_options="$osm2pgsql_expire_option -o $osm2pgsql_expire_tile_list"
 else
