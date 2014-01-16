@@ -76,11 +76,10 @@ fi
 
 if [ ! -s $temporary_diff_file ] ; then
 	rm $script_lock_pid_file
-	echo "Osmosis didn t manage to download and create a non null diff. Exiting now." 1>&2
+	echo "Osmosis failed to download and create a non null diff. Exiting now." 1>&2
 	exit
 fi
 
-exit
 if [ ! -z "$osm2pgsql_expire_option" ]; then
   expire_options="$osm2pgsql_expire_option -o $osm2pgsql_expire_tile_list"
 else
