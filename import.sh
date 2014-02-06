@@ -36,6 +36,6 @@ $data_pipe | $external_bunzip2 | $osm2pgsql $import_osm2pgsql_options -r $parsin
 # scan ensuite plutôt qu'utiliser l'indexe
 cat $(dirname $0)/requetes-sql-indexes-et-autre/index-planet_osm_ways-a-reindexer.sql | psql $base_osm
 
-if [ -z $end_of_import_email ] ; then
+if [ ! -z $end_of_import_email ] ; then
   echo "End of $1 import with osm2pgsql on `hostname`" | mail -s "This email does'nt tell you that this import went well, it tells you it ended ;-)" $end_of_import_email -- -f $end_of_import_email
 fi
