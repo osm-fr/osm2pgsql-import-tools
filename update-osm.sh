@@ -45,7 +45,7 @@ fi
 #The pid file is older than 300 minutes (maybe make this a parameter ?), we consider something went wrong (serveur reboot, task stucked)
 #we kill everything that could still be live
 #This is however suboptimal, if some other process got that pid (like after a server crash, we might kill some innoncent process)
-if test -f $script_lock_pid_file ; then
+if [ -f $script_lock_pid_file ]; then
   if test `find $script_lock_pid_file -mmin +300` ; then
     for pid_file in $osmosis_lock_pid_file $osm2pgsql_lock_pid_file $script_lock_pid_file; do
       kill -9 `cat $pid_file` 2>/dev/null
@@ -65,7 +65,7 @@ rm $project_dir/download.lock 2>/dev/null
 
 
 # diff file still here ? we suppose it's the last one that should still be applied
-if ! test -e $temporary_diff_file ; then
+if [ ! -e $temporary_diff_file ]; then
   time_spent start
   eval $osmosis --rri workingDirectory="$project_dir" --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
   echo $! > $osmosis_lock_pid_file
