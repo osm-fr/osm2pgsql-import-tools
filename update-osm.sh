@@ -63,21 +63,25 @@ echo $$ > $script_lock_pid_file
 # for running it again is what I came to as a lazy solution
 rm $project_dir/download.lock 2>/dev/null
 
-
-# diff file still here ? we suppose it's the last one that should still be applied
-if [ ! -e $temporary_diff_file ]; then
-  time_spent start
-  eval $osmosis --rri workingDirectory="$project_dir" --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
-  echo $! > $osmosis_lock_pid_file
-  wait $!
-  rm $osmosis_lock_pid_file
-  time_spent stop osmosis
+# We found an old state.txt.old file, if it is here, then something went wront, restart from that state file
+if [ -e $project_dir/state.txt.old ] ; then
+	cp $project_dir/state.txt.old $project_dir/state.txt
 fi
 
+#Save current state file to state.txt.old
+cp $project_dir/state.txt $project_dir/state.txt.old
+time_spent start
+eval $osmosis --rri workingDirectory="$project_dir" --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
+echo $! > $osmosis_lock_pid_file
+wait $!
+rm $osmosis_lock_pid_file
+time_spent stop osmosis
+
+
 if [ ! -s $temporary_diff_file ] ; then
-	rm $script_lock_pid_file
-	echo "Osmosis failed to download and create a non null diff. Exiting now." 1>&2
-	exit
+  rm $script_lock_pid_file
+  echo "Osmosis failed to download and create a non null diff. Exiting now." 1>&2
+  exit
 fi
 
 if [ ! -z "$osm2pgsql_expire_option" ]; then
@@ -110,6 +114,7 @@ fi
 if [ $osm2pgsql_exit_code == 0 ] ; then
   rm $temporary_diff_file
   rm $script_lock_pid_file
+  rm $project_dir/state.txt.old
 else
   echo "osm2pgsql failed at importing diffs, more information if you enable verbosity." 1>&2
 fi
