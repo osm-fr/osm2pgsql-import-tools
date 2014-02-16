@@ -1,4 +1,4 @@
--- remember that osm2pgsql do that with -a
+-- remember that osm2pgsql do that with -c
 drop table planet_osm_line;
 drop table planet_osm_nodes;
 drop table planet_osm_point;

@@ -8,10 +8,10 @@ if [ $verbosity == 1 ] ; then
   set -x # prints command executed
 fi
 
-if [ $verbosity == 0 ] ; then
-  dev_null_redirection=">/dev/null"
+if [ $verbosity == 1 ] ; then
+  dev_null_redirection=""
 else
-  dev_null_redirection="2>/dev/null >/dev/null"
+  dev_null_redirection="> /dev/null"
 fi
 
 temporary_diff_file=$work_dir/diff.osc
@@ -92,7 +92,7 @@ fi
 
 #Import du diff, avec création de la liste des tuiles à ré-générer
 time_spent start
-$osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file &
+eval $osm2pgsql $diff_osm2pgsql_options $expire_options $temporary_diff_file $dev_null_redirection &
 echo $! > $osm2pgsql_lock_pid_file
 wait $!
 osm2pgsql_exit_code=$?
@@ -104,7 +104,7 @@ if [ ! -z "$rendering_styles_tiles_to_expire" ]; then
   #when a rendering is used, expire the tiles for it
   time_spent start
   for sheet in $rendering_styles_tiles_to_expire ; do 
-	cat $osm2pgsql_expire_tile_list | $render_expired_prefix render_expired --map=$sheet $render_expired_options $dev_null_redirection
+	cat $osm2pgsql_expire_tile_list | eval $render_expired_prefix render_expired --map=$sheet $render_expired_options $dev_null_redirection
   done	
   time_spent stop tile_expiry
   rm $osm2pgsql_expire_tile_list
