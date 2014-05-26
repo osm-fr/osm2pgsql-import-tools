@@ -26,10 +26,12 @@ with_timeings=1
 
 #For osm2pgsql options (database name is not hardcoded here because some scripts needs it as a variable, so we just make use of it here)
 #--tag-transform-script $project_dir/script.lua (pensez à faire des chemin absolu ou utilisez $project_dir sinon, ça foire quand c'est pas lancé du dossier en cours)
-common_osm2pgsql_options=" -k -m -G -s -S $project_dir/osm2pgsql-choosen.style -d $base_osm --flat-nodes /ssd/osm2pgsql/flat-nodes.raw --keep-coastlines --tag-transform-script $project_dir/script.lua"
+common_osm2pgsql_options=" -k -m -G -s -S $project_dir/osm2pgsql-choosen.style -d $base_osm"
 diff_osm2pgsql_options="--number-processes=8 -a -C 64 $common_osm2pgsql_options"
-import_osm2pgsql_options="--create --unlogged -C 24000 --number-processes=12 $common_osm2pgsql_options --tablespace-main-data ssd --tablespace-main-index ssd --tablespace-slim-data ssd --tablespace-slim-index ssd "
+import_osm2pgsql_options="--create -C 10000 --number-processes=6 $common_osm2pgsql_options"
 
+#post import sql scripts in directory "requetes-sql-indexes-et-autre" to run, separated by spaces. (index-planet_osm_ways-a-reindexer.sql at least is recommended to rebuild a failing index)
+operations_post_import="index-planet_osm_ways-a-reindexer.sql"
 
 #Rendering related
 #osm2pgsql expire list creation options (if empty no expiration list is built)

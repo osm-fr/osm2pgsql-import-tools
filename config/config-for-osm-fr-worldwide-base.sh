@@ -32,8 +32,10 @@ with_timeings=1
 #--tag-transform-script $project_dir/script.lua (pensez à faire des chemin absolu ou utilisez $project_dir sinon, ça foire quand c'est pas lancé du dossier en cours)
 common_osm2pgsql_options=" -k -m -G -s -S $project_dir/osm2pgsql-choosen.style -d $base_osm --flat-nodes /ssd/osm2pgsql/flat-nodes.raw --keep-coastlines --tag-transform-script $project_dir/config/activate-relation-type-waterway.lua"
 diff_osm2pgsql_options="--number-processes=8 -a -C 64 $common_osm2pgsql_options"
-import_osm2pgsql_options="--create --unlogged -C 16000 --number-processes=8 $common_osm2pgsql_options --tablespace-main-data ssd --tablespace-main-index ssd --tablespace-slim-data ssd --tablespace-slim-index ssd "
+import_osm2pgsql_options="--create -C 16000 --number-processes=8 $common_osm2pgsql_options --tablespace-main-data ssd --tablespace-main-index ssd --tablespace-slim-data ssd --tablespace-slim-index ssd "
 
+#post import sql scripts in directory "requetes-sql-indexes-et-autre" to run, separated by spaces. (index-planet_osm_ways-a-reindexer.sql at least is recommended to rebuild a failing index)
+operations_post_import="index-planet_osm_ways-a-reindexer.sql"
 
 #Rendering related
 #osm2pgsql expire list creation options (if empty no expiration list is built)

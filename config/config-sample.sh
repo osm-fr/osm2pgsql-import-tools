@@ -30,7 +30,10 @@ with_timeings=1
 
 common_osm2pgsql_options="--number-processes=4 -m -G -s -S $project_dir/config/default.style -d $base_osm"
 diff_osm2pgsql_options="-a -C 64 $common_osm2pgsql_options"
-import_osm2pgsql_options="--create --unlogged -C 3000 $common_osm2pgsql_options"
+import_osm2pgsql_options="--create -C 3000 $common_osm2pgsql_options"
+
+#post import sql scripts in directory "requetes-sql-indexes-et-autre" to run, separated by spaces. (index-planet_osm_ways-a-reindexer.sql at least is recommended to rebuild a failing index)
+operations_post_import="index-planet_osm_ways-a-reindexer.sql"
 
 
 #Rendering related
