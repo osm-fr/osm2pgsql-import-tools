@@ -33,13 +33,6 @@ Import initial
 ou
 ./import.sh /truc/fichier.osm.bz2 (ou pbf)
 
-options :
----------
-* If you want some more indexes and simplified geometries (usefull for layers.openstreetmap.fr and suivi communes) :
-``
-. ./config.sh ; cat ./pre-post-import/after_create.sql | psql $base_osm
-``
-
 Maintenir à jour
 ----------------
 Trouver le fichier state.txt qui soit quelques minutes avant la date de génération du fichier que vous avez utilisé et placer le 
@@ -47,10 +40,11 @@ dans le dossier racine (au même niveau que ce fichier README.md)
 
 on met ça dans le cron :
 # Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
-*/10 * * * * (sleep 15; cd /data/project/osm2pgsql/import-base-osm ; ./update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
+*/10 * * * * (sleep 15; /data/project/osm2pgsql/import-base-osm/update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
 ou en plus simple :
-*/10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm  ; ./update-osm.sh 
+*/10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm/update-osm.sh 
 
+Note pour debug : dans le config.sh vous pouvez activer une sortie verbeuse pour avoir plus d'info que seulement les grosses erreurs
 
 
 
@@ -64,6 +58,7 @@ quelque chose, n'hésitez pas à compléter
 Questions ? sylvain at letuffe p org
 
 = import de la base =
+Créer une base osm
 Créer un compte shell et le même dans postgresql (habituellement osm2pgsql)
 créer un schéma osm2pgsql et le rendre par défaut pour l'utilisateur
 osm2pgsql
@@ -73,9 +68,12 @@ Se connecter avec le compte shell osm2pgsql
 
 @ gestion des roles d'accès
 se connecter en shell postgresql
-cd ./gestion-des-access
+cd maintenance/gestion-des-access/
 (voir fichier roles-a-creer.txt)
 for x in `cat roles.txt` ; do u=`echo $x | cut -f1 -d\;` ; p=`echo $x | cut -f2 -d\;` ; ./creation-roles.sh $u $p ; done
+
+la liste des roles.txt peut être récupérer sur le wiki d'osm-fr : http://docs.openstreetmap.fr
+
 
 = import des minutes diffs pour maintenir à jour =
 
