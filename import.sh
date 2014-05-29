@@ -33,7 +33,7 @@ $data_pipe | $external_bunzip2 | $osm2pgsql $import_osm2pgsql_options -r $parsin
 
 # running post import sql scripts (should this variable be unset, it shouldn't do anything)
 for sql in $operations_post_import ; do 
-	cat $(dirname $0)/requetes-sql-indexes-et-autre/$sql | psql $base_osm
+	cat $project_dir/requetes-sql-indexes-et-autre/$sql | psql $base_osm
 done
 
 if [ ! -z $end_of_import_email ] ; then
