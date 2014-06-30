@@ -29,23 +29,28 @@ Lancement
 
 Import initial
 --------------
+Depuis une URL en "streaming" :
 ./import.sh http://la-bas/un-fichier.osm.bz2 (ou pbf)
-ou
+ou depuis un ficher local préalablement téléchargé :
 ./import.sh /truc/fichier.osm.bz2 (ou pbf)
 
 Maintenir à jour
 ----------------
 Trouver le fichier state.txt qui soit quelques minutes avant la date de génération du fichier que vous avez utilisé et placer le 
 dans le dossier racine (au même niveau que ce fichier README.md)
+Si vous utilisez le fichier planet, un truc comme ça :
+wget -q -O - http://planet.osm.org/planet/planet-latest.osm.bz2 | bunzip2 | head -n 10 | grep timestamp
+
+vous sort le timestamp du dernier fichier bz2 (qui est le même que celui du pbf, prenez alors fichier state.txt quelque part là dedans : http://planet.osm.org/replication/minute/ 
+qui soit antérieur à cette date)
 
 on met ça dans le cron :
 # Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
 */10 * * * * (sleep 15; /data/project/osm2pgsql/import-base-osm/update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
-ou en plus simple :
+ou en plus simple (sans garder les logs):
 */10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm/update-osm.sh 
 
 Note pour debug : dans le config.sh vous pouvez activer une sortie verbeuse pour avoir plus d'info que seulement les grosses erreurs
-
 
 
 La suite n'est plus vraiment à jour, merci de bien lire les scripts, c'est là que vous aurrez la dernière info (et proposer de mettre à jour cet aide !)

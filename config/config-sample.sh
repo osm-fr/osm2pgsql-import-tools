@@ -11,7 +11,7 @@ project_dir=$(dirname $0)
 osm2pgsql=$project_dir/../osm2pgsql/osm2pgsql
 osmosis=$project_dir/../osmosis/bin/osmosis
 
-#database name to choose
+#database name to choose, in a variable to be able to adapt other scripts than the import & update ones
 base_osm=osm
 
 #directory where temporary diff files will be stored, timeing for import, pid lock files and log files 
@@ -24,9 +24,9 @@ verbosity=0
 #record timeings of osm2pgsql, osmosis and tile generation processing
 with_timeings=1
 
-#For osm2pgsql options (we could set the database name in it, but if an external script wants the database name, 
-#it would be easier to keep it in a variable) 
-#--tag-transform-script $project_dir/script.lua (pensez à faire des chemin absolu ou utilisez $project_dir sinon, ça foire quand c'est pas lancé du dossier en cours)
+#For osm2pgsql options (we could set the database name in it, but if an external script (and there is one !) wants the database name, 
+#it is easier to keep it in a variable) 
+#need some lua script ? add this : --tag-transform-script $project_dir/script.lua (no relative path, use $project_dir to refer to current dir)
 
 common_osm2pgsql_options="--number-processes=4 -m -G -s -S $project_dir/config/default.style -d $base_osm"
 diff_osm2pgsql_options="-a -C 64 $common_osm2pgsql_options"
@@ -43,7 +43,7 @@ osm2pgsql_expire_option=""
 osm2pgsql_expire_tile_list=$work_dir/expire.list
 
 #List of rendering style to run thru the render_expired commands
-#Be sure that this scrpt as the filesystem rights to access tiles 
+#Be sure that this script has the filesystem rights to access tiles 
 #separate style name by a space like "style1 style2"
 #if empty, no expiration will occure, you'll have to do it with the expiry tile files in an other way
 

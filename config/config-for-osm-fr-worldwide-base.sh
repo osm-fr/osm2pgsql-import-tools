@@ -19,9 +19,6 @@ base_osm=osm
 work_dir=/run/shm/osm2pgsql-import
 
 
-#log errors and command output in the $work_dir (1 is yes, 0 is no)
-with_log=0
-
 #0 doesn't print anything out, 1 prints every commands that we run + output of commands
 verbosity=1
 
@@ -30,12 +27,12 @@ with_timeings=1
 
 #For osm2pgsql options (database name is not hardcoded here because some scripts needs it as a variable, so we just make use of it here)
 #--tag-transform-script $project_dir/script.lua (pensez à faire des chemin absolu ou utilisez $project_dir sinon, ça foire quand c'est pas lancé du dossier en cours)
-common_osm2pgsql_options=" -k -m -G -s -S $project_dir/osm2pgsql-choosen.style -d $base_osm --flat-nodes /ssd/osm2pgsql/flat-nodes.raw --keep-coastlines --tag-transform-script $project_dir/config/activate-relation-type-waterway.lua"
-diff_osm2pgsql_options="--number-processes=8 -a -C 64 $common_osm2pgsql_options"
-import_osm2pgsql_options="--create -C 16000 --number-processes=8 $common_osm2pgsql_options --tablespace-main-data ssd --tablespace-main-index ssd --tablespace-slim-data ssd --tablespace-slim-index ssd "
+common_osm2pgsql_options=" -k -m -G -s -S $project_dir/osm2pgsql-choosen.style -d $base_osm --keep-coastlines --flat-nodes /ssd/osm2pgsql/flat-nodes.raw --tag-transform-script $project_dir/config/activate-relation-type-waterway.lua"
+diff_osm2pgsql_options="--number-processes=4 -a -C 64 $common_osm2pgsql_options"
+import_osm2pgsql_options="--create -C 18000 --number-processes=8 $common_osm2pgsql_options --tablespace-main-data ssd --tablespace-main-index ssd --tablespace-slim-data ssd --tablespace-slim-index ssd "
 
-#post import sql scripts in directory "requetes-sql-indexes-et-autre" to run, separated by spaces. (index-planet_osm_ways-a-reindexer.sql at least is recommended to rebuild a failing index)
-operations_post_import="index-planet_osm_ways-a-reindexer.sql"
+#post import sql scripts in requetes-sql-indexes-et-autre to run, separated by spaces
+operations_post_import="index-planet_osm_ways-a-reindexer.sql indexes-admin_level.sql indexes-ref.sql index-ref-sandre.sql"
 
 #Rendering related
 #osm2pgsql expire list creation options (if empty no expiration list is built)

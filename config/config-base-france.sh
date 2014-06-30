@@ -37,7 +37,7 @@ osm2pgsql_expire_option=""
 osm2pgsql_expire_tile_list=$work_dir/expire.list
 
 #List of rendering style to run thru the render_expired commands
-#Be sure that this scrpt as the filesystem rights to access tiles 
+#Be sure that this script has the filesystem rights to access tiles 
 rendering_styles_tiles_to_expire="2u openriverboatmap hot"
 render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 
