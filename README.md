@@ -1,5 +1,5 @@
 Ce dossier est maintenau par git, toute bidouille à la main pourrait être écrasée par une future synchro.
-Paramétrez plutôt les deux fichiers de configuration !
+Paramétrez plutôt les fichiers de configuration propre à chaque instance !
 
 osm2pgsql-import-tools
 ======================
@@ -8,7 +8,7 @@ osm2pgsql-import-tools
 et 1 pour la maintenir à jour avec des diffs.
 
 je tente au mieux de gérer les problèmes qui peuvent survenir, d'avoir le plus possible en paramètre, avoir un suivi de perf et d'éviter de trifouiller les scripts
-en n'ayant à intervenir que dans les fichiers du dossier "config"
+en n'ayant à intervenir que dans les fichiers de config
 
 Installation
 ============
@@ -29,10 +29,18 @@ Lancement
 
 Import initial
 --------------
+
 Depuis une URL en "streaming" :
 ./import.sh http://la-bas/un-fichier.osm.bz2 (ou pbf)
 ou depuis un ficher local préalablement téléchargé :
 ./import.sh /truc/fichier.osm.bz2 (ou pbf)
+
+CHECKLISTE pour une ré-importation sur un système en prod :
+- restarter postgresql en interdisant toutes les connexions sauf postgres et osm2pgsql en socket unix (donc local) -> c'est pour éviter que des requêtes aient lieu quand les données sont là, mais pas encore les indexes
+(si munin : - empêcher munin de calculer la taille des schémas qui, pour une raison qui m'échappe, semble ne pas aboutir : à vérifier fichier /etc/munin/postgres_schema_size_osm)
+- couper les update faites par osm2pgsql dans le cron
+- lancer l'import dans un screen
+- prépare le state.txt correspondant au fichier de l'import
 
 Maintenir à jour
 ----------------
