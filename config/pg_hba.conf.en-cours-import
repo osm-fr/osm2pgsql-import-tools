@@ -1,0 +1,12 @@
+#This is a sample of a postgresql "pg_hba.conf" file you could use during import to temporarily forbid all other connexions
+#to avoid running queries at the bad import moment (like when indexes are not yet available)
+
+
+# DO NOT DISABLE!
+# Database administrative login by Unix domain socket
+local   all             postgres                                peer
+
+# "local" is for Unix domain socket connections only
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+local   osm                      osm2pgsql                               peer
+#       ^^^your osm2pgsql db      ^^ your user accessing the db
