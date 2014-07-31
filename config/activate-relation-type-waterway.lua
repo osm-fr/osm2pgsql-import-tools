@@ -52,7 +52,7 @@ function filter_tags_generic(keyvalues, nokeys)
       return filter, keyvalues
    end
 
-   delete_tags = { 'FIXME', 'note', 'source' }
+   delete_tags = { 'source' }
 
    for i,k in ipairs(delete_tags) do
       keyvalues[k] = nil
