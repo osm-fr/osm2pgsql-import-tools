@@ -8,8 +8,10 @@ else
   etape=$1
 fi
 
-echo "cet outil calcul la moyenne de temps pris par l'étape passé en paramètre qui peut être : osm2pgsql, osmosis ou expire_tiles"
-echo "votre choix est $etape"
+if [ "$1" == "" ] ; then
+  echo "This tool computes timespent by one of those 3 steps : osm2pgsql, osmosis ou tile_expiry"
+  echo "usage : ./infos_temps osmosis"
+fi
 
 i=0 
 tot=0
@@ -17,4 +19,4 @@ for x in `grep $etape $work_dir/diff-update-timing | cut -f3 -d,` ; do
   i=$(($i+1)) 
   tot=$(($tot+$x)) 
 done 
-echo "l'étape de traitement $etape prend en moyenne $(($tot/$i)) secondes"
+echo "Step $etape took on average $(($tot/$i)) seconds"
