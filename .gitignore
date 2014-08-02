@@ -2,3 +2,5 @@ osm2pgsql-choosen.style
 config.sh
 configuration.txt
 state.txt
+state.txt.old
+download.lock

@@ -4,12 +4,21 @@
 
 . $(dirname $0)/config.sh
 
-if [ $verbosity == 1 ] ; then
-  set -x # prints command executed
+if [ "$max_load" != "" ] ; then
+  # check load average, if too high, exit
+  if [ "$(grep '^[0-9]*' -o /proc/loadavg)" -ge "$max_load" ]; then
+    exit
+  fi
+fi
+
+# FIXME : I'm sure there is a better way to use parameters with bash scripts, but I'm lazy to search for it
+if [ "$1" == "-v" ] || [ "$2" == "-v" ] ; then # To force verbosity for manual run without need to mess up with config file
+  verbosity=1
 fi
 
 if [ $verbosity == 1 ] ; then
   dev_null_redirection=""
+  set -x # prints command executed   
 else
   dev_null_redirection="> /dev/null"
 fi
@@ -21,7 +30,7 @@ current_date="`date +%F-%R`"
 message_log_file=$work_dir/replication-${current_date}.log
 error_log_file=$work_dir/replication-${current_date}.err
 
-#FIXME : pid file should go into a more appropriate zone such as /run/ on debian, but I don't really want to hard code it for debian only ;-)
+# FIXME : pid file should go into a more appropriate zone such as /run/ on debian, but I don't really want to hard code it for debian only ;-)
 script_lock_pid_file=$work_dir/script.pid
 osm2pgsql_lock_pid_file=$work_dir/osm2pgsql.pid
 osmosis_lock_pid_file=$work_dir/osmosis.pid
@@ -44,7 +53,7 @@ fi
 
 #The pid file is older than 300 minutes (maybe make this a parameter ?), we consider something went wrong (serveur reboot, task stucked)
 #we kill everything that could still be live
-#This is however suboptimal, if some other process got that pid (like after a server crash, we might kill some innoncent process)
+#This is however suboptimal, if some other process got that pid (like after a server crash, we might kill some innoncent process from the user running this script so : don't run it as root !
 if [ -f $script_lock_pid_file ]; then
   if test `find $script_lock_pid_file -mmin +300` ; then
     for pid_file in $osmosis_lock_pid_file $osm2pgsql_lock_pid_file $script_lock_pid_file; do

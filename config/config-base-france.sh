@@ -43,3 +43,6 @@ render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 
 #Email to send end of initial import notice
 end_of_import_email=""
+
+#Passed this system load, don't run any update at all, set it to empty to disable
+max_load=""

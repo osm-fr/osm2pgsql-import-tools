@@ -58,3 +58,6 @@ render_expired_prefix=""
 
 #Email to send end of initial import notice
 end_of_import_email=""
+
+#Passed this system load, don't run any update at all, chosse an integer or set it to empty to disable
+max_load=""

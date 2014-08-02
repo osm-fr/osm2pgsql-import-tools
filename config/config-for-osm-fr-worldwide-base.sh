@@ -51,3 +51,6 @@ render_expired_prefix="sudo -u www-data"
 
 #Email to send end of initial import notice
 end_of_import_email="alertes@letuffe.org"
+
+#Passed this system load, don't run any update at all, set it to empty to disable
+max_load=""
