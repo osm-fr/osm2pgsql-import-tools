@@ -1,39 +1,65 @@
-Ce dossier est maintenau par git, toute bidouille à la main pourrait être écrasée par une future synchro.
-Paramétrez plutôt les fichiers de configuration propre à chaque instance !
+Those are shell scripts for importing and maintaining up to date an osm2pgsql schema of a postgresql database 
++ tools around that 
++ SQL requests for custom indexes 
++ management of renderd tile expiry
 
 osm2pgsql-import-tools
 ======================
 
-1 scripts pour importer une base osm au schéma osm2pgsql
-et 1 pour la maintenir à jour avec des diffs.
+Quick overview :
+./config.sh --> common config file (write your own with ./config/* as models or examples)
+./import.sh ---> to import from a .osm .osm.bz2 .pbf file or URL
+./update-osm.sh ---> to import diff updates (see http://wiki.openstreetmap.org/wiki/Minutely_Mapnik )
 
-je tente au mieux de gérer les problèmes qui peuvent survenir, d'avoir le plus possible en paramètre, avoir un suivi de perf et d'éviter de trifouiller les scripts
-en n'ayant à intervenir que dans les fichiers de config
+side tools :
+./render_list.sh --> to command renderd to render some zoom levels
+./maintenance/time-spent-by-all-steps.sh --> benchmarks on time spent by different steps or update process (need activation)
+./maintenance/from-temporary-tables-during-import-to-production.sh --> simple script to drop and move production tables after import to reduce downtime
+./maintenance/gestion-des-access/creation-roles.sh --> postgres roles creation with read only access to osm2pgsql tables
 
 Installation
 ============
 
-* Voir http://wiki.openstreetmap.org/wiki/Osm2pgsql qui détaille comment compiler et comment fonctionne osm2pgsql (avec support lua et pbf).
+* Read http://wiki.openstreetmap.org/wiki/Osm2pgsql to compile osm2pgsql
 
-* Il vous faudra aussi osmosis pour télécharger les diffs (voir wiki aussi)
+* http://wiki.openstreetmap.org/wiki/Osmosis for diff download and grouping
 
-* copier ./config/config-sample.sh vers ./config.sh et adaptez les chemins & les options (ou prenez un fichier déjà existant d'exemple ou faite un lien symbolique de ./config.sh vers ceux déjà prêt dans ./config/ selon )
+* Copy ./config/config-sample.sh to ./config.sh and adapt (or use some adapted to extract or full planet)
 
-* pareil pour ./config/configuration-sample.txt qui devient ./configuration.txt
+* Copy ./config/configuration-sample.txt to ./configuration.txt
 
-* pareil enfin pour un style d'osm2pgsql que vous pouvez copier de ./config/*.style vers osm2pgsql-choosen.style 
-(vous pouvez aussi laisser la config par défaut qui va chercher le ./config/default.style, mais si quelqu'un met à jour le style par défaut, ça pourrait vous poser problème)
+* Copy some osm2pgsql style file from ./config/*.style to osm2pgsql-choosen.style (optionnal if you want the default one, then edit config.sh acordingly)
 
-Lancement
+Running
 =========
 
-Import initial
+Initial import
 --------------
 
-Depuis une URL en "streaming" :
-./import.sh http://la-bas/un-fichier.osm.bz2 (ou pbf)
-ou depuis un ficher local préalablement téléchargé :
-./import.sh /truc/fichier.osm.bz2 (ou pbf)
+From a URL ( "streaming" mode) :
+./import.sh http://la-bas/un-fichier.osm.bz2 (or pbf)
+or from a local file :
+./import.sh /truc/fichier.osm.bz2 (or pbf)
+
+Update your database
+--------------------
+Download the state.txt file a few minutes earlier than the osm file you imported and put it aside from "update-osm.sh" script
+
+Tweak : If you are importing from planet file at planet.osm.org, this command : 
+wget -q -O - http://planet.osm.org/planet/planet-latest.osm.bz2 | bunzip2 | head -n 10 | grep timestamp
+should get you the timestamp of the file. If you are using the pbf file, timestamp is exactly the same, then get the state.txt here : http://planet.osm.org/replication/minute/ 
+with a date just before.
+
+Then put in your contrab a line like :
+*/10 * * * * $PATH/update-osm.sh > some_log_file 2>&1
+
+Tweak for debuging : in config.sh you can activate a more verbose output for more information
+OR
+run "./update-osm.sh -v" to force verbose mode
+
+
+
+Older french documentation :
 
 CHECKLISTE pour une ré-importation sur un système en prod :
 - restarter postgresql en interdisant toutes les connexions sauf postgres et osm2pgsql en socket unix (donc local) -> c'est pour éviter que des requêtes aient lieu quand les données sont là, mais pas encore les indexes
@@ -41,24 +67,6 @@ CHECKLISTE pour une ré-importation sur un système en prod :
 - couper les update faites par osm2pgsql dans le cron
 - lancer l'import dans un screen
 - prépare le state.txt correspondant au fichier de l'import
-
-Maintenir à jour
-----------------
-Trouver le fichier state.txt qui soit quelques minutes avant la date de génération du fichier que vous avez utilisé et placer le 
-dans le dossier racine (au même niveau que ce fichier README.md)
-Si vous utilisez le fichier planet, un truc comme ça :
-wget -q -O - http://planet.osm.org/planet/planet-latest.osm.bz2 | bunzip2 | head -n 10 | grep timestamp
-
-vous sort le timestamp du dernier fichier bz2 (qui est le même que celui du pbf, prenez alors fichier state.txt quelque part là dedans : http://planet.osm.org/replication/minute/ 
-qui soit antérieur à cette date)
-
-on met ça dans le cron :
-# Quand la base est en retard : mettre toutes les minutes, en mode croisière toutes les ~10 minutes
-*/10 * * * * (sleep 15; /data/project/osm2pgsql/import-base-osm/update-osm.sh >>/data/work/osm2pgsql/log/replication-$(date +'\%Y-\%m-\%d').log 2>&1)
-ou en plus simple (sans garder les logs):
-*/10 * * * * sleep 15; cd /data/project/osm2pgsql/import-base-osm/update-osm.sh 
-
-Note pour debug : dans le config.sh vous pouvez activer une sortie verbeuse pour avoir plus d'info que seulement les grosses erreurs
 
 
 La suite n'est plus vraiment à jour, merci de bien lire les scripts, c'est là que vous aurrez la dernière info (et proposer de mettre à jour cet aide !)

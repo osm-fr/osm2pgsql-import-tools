@@ -16,7 +16,7 @@ if [ $extension == "pbf" ] ; then
   parsing_mode="pbf"
   #FIXME I can't find a way to pass the | in the variable
   external_bunzip2="cat"
-else if [ $extension == "bz2" ]
+elif [ $extension == "bz2" ] ; then
   external_bunzip2="bunzip2 -c"
   parsing_mode="libxml2"
 else

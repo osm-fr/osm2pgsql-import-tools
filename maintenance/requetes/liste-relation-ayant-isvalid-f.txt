@@ -1,1 +1,0 @@
-select osm_id,st_isvalidreason(st_transform(way,4300)) from planet_osm_polygon where "ref:INSEE" is not null and st_isvalid(way)='f';
