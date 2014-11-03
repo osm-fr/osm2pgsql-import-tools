@@ -1,17 +1,16 @@
-roles à créer dans la base osm2pgsql : 
-Ils sont dans le fichiers roles.txt
 
-un truc du genre devrait tous les créer d'un coup, si besoin de les remettre :
+roles PG à créer ayant besoin d'un accès à la base osm qui contient le
+schéma osm2pgsql : 
+
+Mettre dans un fichier les roles et leur mot de passe de cette façon :
+toto;123
+titi;345
+
+et lancer un truc du genre devrait tous les créer d'un coup, si besoin de les remettre :
 
 for x in `cat roles.txt` ; do u=`echo $x | cut -f1 -d\;` ; p=`echo $x | cut -f2 -d\;` ; ./creation-roles.sh $u $p ; done
 
-mapnik
-======
-ce compte est utilisé par layers.openstreetmap.fr en local et par l'outil de suivi de commune sur osm7
-
-
-osm2gis
-=======
-Utilisé, à distance, par http://www.osm974.re/osm2gis/ (qui sera déplacé en
-local ultérieurement)
+(si déjà présent, ça ne devrait pas poser problème hors mis une erreur du
+genre "existe déjà")
+Oui, c'est pas propre.
 
