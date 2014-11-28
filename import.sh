@@ -34,10 +34,8 @@ echo $data_pipe $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
 
 $data_pipe | $external_bunzip2 | $osm2pgsql $import_osm2pgsql_options -r $parsing_mode /dev/stdin
 
-# running post import sql scripts (should this variable be unset, it shouldn't do anything)
-for sql in $operations_post_import ; do 
-	cat $project_dir/requetes-sql-indexes-et-autre/$sql | psql $base_osm
-done
+# running post import sql scripts (will do nothing if no sql scripts configured in config.sh)
+$project_dir/apply-post-import-sql.sh
 
 if [ ! -z $end_of_import_email ] ; then
   echo "End of $1 import with osm2pgsql on `hostname`" | mail -s "This email does'nt tell you that this import went well, it tells you it ended ;-)" $end_of_import_email -- -f $end_of_import_email
