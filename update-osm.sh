@@ -122,11 +122,12 @@ fi
 #looks like everything was well
 if [ $osm2pgsql_exit_code == 0 ] ; then
   rm $temporary_diff_file
-  rm $script_lock_pid_file
   rm $project_dir/state.txt.old
 else
   echo "osm2pgsql failed at importing diffs, more information if you enable verbosity." 1>&2
 fi
+
+rm $script_lock_pid_file
 
 if [ $verbosity == 1 ] ; then
   set +x
