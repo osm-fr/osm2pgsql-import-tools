@@ -49,8 +49,8 @@ render_expired_options="--min-zoom=12 --touch-from=12 --max-zoom=20"
 #You can use this to execute the render_expired with another user like "sudo -u www-data"
 render_expired_prefix="sudo -u www-data"
 
-#Email to send end of initial import notice
-end_of_import_email="alertes@letuffe.org"
+#Email to send end of initial import notice (Leave it empty for not warning of import end)
+end_of_import_email=""
 
 #Passed this system load, don't run any update at all, set it to empty to disable
 max_load=""

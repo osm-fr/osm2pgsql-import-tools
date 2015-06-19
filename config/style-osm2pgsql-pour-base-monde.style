@@ -158,7 +158,7 @@ way         area:highway            text    phstore
 # Deleted tags
 # These are tags that are generally regarded as useless for most rendering.
 
-#sylvain@letuffe : Finalement, ca supprime bien trop de truc tout ca, et comme on risque d'en avoir besoin un jour pour un traitement de type "pas rendu"
+#sly : Finalement, ca supprime bien trop de truc tout ca, et comme on risque d'en avoir besoin un jour pour un traitement de type "pas rendu"
 #je prefere jouer secure et ne rien supprimer, pourvu que ca rentre
 
 
