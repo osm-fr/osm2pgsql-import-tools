@@ -66,7 +66,7 @@ CHECKLISTE pour une ré-importation sur un système en prod :
 (si munin : - empêcher munin de calculer la taille des schémas qui, pour une raison qui m'échappe, semble ne pas aboutir : à vérifier fichier /etc/munin/postgres_schema_size_osm)
 - couper les update faites par osm2pgsql dans le cron
 - lancer l'import dans un screen
-- prépare le state.txt correspondant au fichier de l'import
+- prépare le state.txt correspondent au fichier de l'import
 
 
 La suite n'est plus vraiment à jour, merci de bien lire les scripts, c'est là que vous aurrez la dernière info (et proposer de mettre à jour cet aide !)
