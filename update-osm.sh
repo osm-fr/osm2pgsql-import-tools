@@ -80,7 +80,7 @@ fi
 #Save current state file to state.txt.old
 cp $project_dir/state.txt $project_dir/state.txt.old
 time_spent start
-eval $osmosis --rri workingDirectory="$project_dir" --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
+eval $osmosis --rri workingDirectory="$project_dir" --buffer-change --simplify-change --write-xml-change $temporary_diff_file $dev_null_redirection &
 echo $! > $osmosis_lock_pid_file
 wait $!
 rm $osmosis_lock_pid_file
