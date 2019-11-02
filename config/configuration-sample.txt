@@ -4,7 +4,7 @@
 baseUrl=http://download.openstreetmap.fr/replication/europe/france/minute/
 
 #World :
-#baseUrl=http://planet.openstreetmap.org/replication/minute/
+#baseUrl=https://planet.openstreetmap.org/replication/minute/
 
 #Europe only :
 #baseUrl=http://download.openstreetmap.fr/replication/europe/minute/
