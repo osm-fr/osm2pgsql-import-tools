@@ -15,6 +15,10 @@ base_osm=osm
 #/run/shm/ for a ram disk place is good if you don't care about timeings and logs after reboot
 work_dir=/dev/shm
 
+#directory where expire files are stored, to be used when rendering is done on another machine
+#if empty, expire files won't be kept
+expire_dir=""
+
 #0 doesn't print anything out, 1 prints every commands that we run + output of commands
 verbosity=1
 

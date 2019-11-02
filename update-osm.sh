@@ -112,11 +112,21 @@ time_spent stop osm2pgsql
 if [ ! -z "$rendering_styles_tiles_to_expire" ]; then
   #when a rendering is used, expire the tiles for it
   time_spent start
-  for sheet in $rendering_styles_tiles_to_expire ; do 
+  for sheet in $rendering_styles_tiles_to_expire ; do
 	cat $osm2pgsql_expire_tile_list | eval $render_expired_prefix render_expired --map=$sheet $render_expired_options $dev_null_redirection
-  done	
+  done
   time_spent stop tile_expiry
   rm $osm2pgsql_expire_tile_list
+fi
+
+if [ ! -z "$expire_dir" ]; then
+  # gzip expiry list
+  time_spent start
+  d=$(date --utc +%FT%TZ)
+  mv $osm2pgsql_expire_tile_list $osm2pgsql_expire_tile_list-$d
+  mkdir $expire_dir
+  gzip $osm2pgsql_expire_tile_list-$d && mv $osm2pgsql_expire_tile_list-$d.gz $expire_dir
+  time_spent stop tile_exp_gzip
 fi
 
 #looks like everything was well

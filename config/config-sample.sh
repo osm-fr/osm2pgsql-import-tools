@@ -14,6 +14,10 @@ osmosis=$project_dir/../osmosis/bin/osmosis
 #database name to choose, in a variable to be able to adapt other scripts than the import & update ones
 base_osm=osm
 
+#directory where expire files are stored, to be used when rendering is done on another machine
+#if empty, expire files won't be kept
+expire_dir=""
+
 #directory where temporary diff files will be stored, timeing for import, pid lock files and log files 
 #/run/shm for a ram disk place is good if you don't care about timeings and logs after reboot
 work_dir=/run/shm
